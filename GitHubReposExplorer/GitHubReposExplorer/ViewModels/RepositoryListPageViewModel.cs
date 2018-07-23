@@ -13,7 +13,7 @@ namespace GitHubReposExplorer.ViewModels
         public RepositoryListPageViewModel(IRestService restService)
         {
             this.restApiService = restService;
-            restApiService.GetAllRepositories("Javascript");
+            restApiService.GetAllRepositories();
         }
 	}
 }

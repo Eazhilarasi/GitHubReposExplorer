@@ -6,5 +6,6 @@ namespace GitHubReposExplorer.Models
 {
     public class Repository
     {
+      
     }
 }

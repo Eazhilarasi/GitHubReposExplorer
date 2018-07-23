@@ -8,6 +8,6 @@ namespace GitHubReposExplorer.Services
 {
     public interface IRestService
     {
-        Task<IList<Repository>> GetAllRepositories(string language);
+        Task<IList<Repository>> GetAllRepositories(string language = "Javascript");
     }
 }
