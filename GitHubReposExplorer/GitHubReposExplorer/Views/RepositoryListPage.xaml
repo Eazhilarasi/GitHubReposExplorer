@@ -4,5 +4,19 @@
              xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
              prism:ViewModelLocator.AutowireViewModel="True"
              x:Class="GitHubReposExplorer.Views.RepositoryListPage">
-  
+    <StackLayout>
+        <ListView ItemsSource="{Binding RepositoryCollection}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                   <ViewCell>
+                        <StackLayout>
+                            <Label Text="{Binding Name}"/>
+                            <Label Text="{Binding Owner.Login}"/>
+                            <Label Text="abc"/>
+                        </StackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </StackLayout>
 </ContentPage>
