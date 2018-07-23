@@ -24,13 +24,15 @@ namespace GitHubReposExplorer
         {
             InitializeComponent();
 
-            await NavigationService.NavigateAsync("NavigationPage/MainPage");
+            await NavigationService.NavigateAsync("NavigationPage/RepositoryListPage");
         }
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
             containerRegistry.RegisterForNavigation<NavigationPage>();
             containerRegistry.RegisterForNavigation<MainPage>();
+            containerRegistry.RegisterForNavigation<RepositoryListPage>();
+            containerRegistry.RegisterForNavigation<PullRequestListPage>();
         }
     }
 }
