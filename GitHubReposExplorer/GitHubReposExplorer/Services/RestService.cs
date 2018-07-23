@@ -23,8 +23,10 @@ namespace GitHubReposExplorer.Services
         {
             string url = string.Format("/search/repositories?q=language:{0}&sort=stars&page=1", language);
             var records = await GetAsync<Contract.RepositoryContract>(url);
-            //To:DoConvert from contract to list item.
-            
+       
+            if (records != null)
+                return records.Items;
+
             return null;
         }
 
