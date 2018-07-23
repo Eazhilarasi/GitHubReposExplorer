@@ -5,6 +5,8 @@ using GitHubReposExplorer.Views;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Prism.Unity;
+using System.Net.Http;
+using GitHubReposExplorer.Services;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace GitHubReposExplorer
@@ -29,6 +31,10 @@ namespace GitHubReposExplorer
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
+            HttpClient httpClient = new HttpClient();
+            containerRegistry.RegisterInstance(httpClient);
+            containerRegistry.Register<IRestService, RestService>();
+
             containerRegistry.RegisterForNavigation<NavigationPage>();
             containerRegistry.RegisterForNavigation<MainPage>();
             containerRegistry.RegisterForNavigation<RepositoryListPage>();
