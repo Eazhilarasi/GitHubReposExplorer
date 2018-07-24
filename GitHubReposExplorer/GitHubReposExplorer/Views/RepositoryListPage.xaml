@@ -5,15 +5,56 @@
              prism:ViewModelLocator.AutowireViewModel="True"
              x:Class="GitHubReposExplorer.Views.RepositoryListPage">
     <StackLayout>
-        <ListView ItemsSource="{Binding RepositoryCollection}">
+        <ListView ItemsSource="{Binding RepositoryCollection}"
+                  HasUnevenRows="True">
             <ListView.ItemTemplate>
                 <DataTemplate>
                    <ViewCell>
-                        <StackLayout>
-                            <Label Text="{Binding Name}"/>
-                            <Label Text="{Binding Owner.Login}"/>
-                            <Label Text="abc"/>
-                        </StackLayout>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="3*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+                            <Label Text="{Binding Name}"
+                                   Grid.Row="0"
+                                   Grid.Column="0"/>
+                            <Label Text="{Binding Description}"
+                                   Grid.Row="1"
+                                   Grid.Column="0"/>
+                            <StackLayout Grid.Row="2"
+                                         Grid.Column="0"
+                                         Orientation="Horizontal">
+                                <StackLayout Orientation="Horizontal">
+                                    <Image Source="fork.png"
+                                           WidthRequest="20"
+                                           HeightRequest="20"/>
+                                    <Label Text="{Binding Forks_Count}"
+                                           VerticalOptions="Center"/>
+                                </StackLayout>
+
+                                <StackLayout Orientation="Horizontal">
+                                    <Image Source="star.png"
+                                           WidthRequest="20"
+                                           HeightRequest="20"/>
+                                    <Label Text="{Binding Stargazers_Count}"
+                                           VerticalOptions="Center"/>
+                                </StackLayout>
+                            </StackLayout>
+                            <Image Source="{Binding Owner.Avatar_url}"
+                                   Grid.Column="1"
+                                   Grid.Row="0"
+                                   Grid.RowSpan="2"
+                                   HeightRequest="30"
+                                   WidthRequest="30"/>
+                            <Label Text="{Binding Owner.Login}"
+                                   Grid.Column="1"
+                                   Grid.Row="2"/>
+                        </Grid>
                     </ViewCell>
                 </DataTemplate>
             </ListView.ItemTemplate>
