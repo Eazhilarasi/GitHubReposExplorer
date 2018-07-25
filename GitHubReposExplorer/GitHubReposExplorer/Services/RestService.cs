@@ -19,9 +19,9 @@ namespace GitHubReposExplorer.Services
             client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
         }
 
-        public async Task<IList<Repository>> GetAllRepositories(string language = "JavaScript")
+        public async Task<IList<Repository>> GetAllRepositories(int page, int page_size, string language = "JavaScript")
         {
-            string url = string.Format("/search/repositories?q=language:{0}&sort=stars&page=1", language);
+            string url = string.Format("/search/repositories?q=language:{0}&sort=stars&page={1}&per_page={2}", language,page,page_size);
             var records = await GetAsync<Contract.RepositoryContract>(url);
        
             if (records != null)

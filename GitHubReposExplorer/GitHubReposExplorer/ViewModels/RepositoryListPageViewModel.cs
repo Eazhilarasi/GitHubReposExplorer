@@ -6,23 +6,28 @@ using Prism.Navigation;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Xamarin.Forms.Extended;
 
 namespace GitHubReposExplorer.ViewModels
 {
 	public class RepositoryListPageViewModel : ViewModelBase
 	{
         IRestService restApiService;
-        
-        private ObservableCollection<Repository> repositoryCollection;
-        public ObservableCollection<Repository> RepositoryCollection
+        private const int PageSize = 37;
+
+        public InfiniteScrollCollection<Repository> Items { get; }
+
+        private bool _isBusy;
+        public bool IsBusy
         {
-            get { return repositoryCollection; }
+            get { return _isBusy; }
             set
             {
-                repositoryCollection = value;
-                RaisePropertyChanged("RepositoryCollection");
+                _isBusy = value;
+                RaisePropertyChanged("IsBusy");
             }
         }
         public RepositoryListPageViewModel(IRestService restService,
@@ -30,17 +35,43 @@ namespace GitHubReposExplorer.ViewModels
                                             :base(navigationService)
         {
             this.restApiService = restService;
+
+            Items = new InfiniteScrollCollection<Repository>
+            {
+                OnLoadMore = async () =>
+                {
+                    IsBusy = true;
+
+                    // load the next page
+                    var page = (Items.Count / PageSize) + 1;
+                   
+
+                    IList<Repository> repositoryList = await restApiService.GetAllRepositories(page, PageSize);
+                    Debug.WriteLine(Items.Count);
+
+                    IsBusy = false;
+
+                    // return the items that need to be added
+                    return repositoryList;
+                },
+                OnCanLoadMore = () =>
+                {
+                    return Items.Count < 1000;
+                }
+            };
         }
 
         public override void OnNavigatedTo(NavigationParameters parameters)
         {
             Task.Run(async () =>
             {
-                IList<Repository> repositoryList = await restApiService.GetAllRepositories();
+                IsBusy = true;
+                IList<Repository> repositoryList = await restApiService.GetAllRepositories(1,PageSize);
                 if (repositoryList != null && repositoryList.Count > 0)
                 {
-                    RepositoryCollection = new ObservableCollection<Repository>(repositoryList.ToList());
+                    Items.AddRange(repositoryList);
                 }
+                IsBusy = false;
             });
             base.OnNavigatedTo(parameters);
         }

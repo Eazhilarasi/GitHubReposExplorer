@@ -3,10 +3,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
              prism:ViewModelLocator.AutowireViewModel="True"
-             x:Class="GitHubReposExplorer.Views.RepositoryListPage">
+             x:Class="GitHubReposExplorer.Views.RepositoryListPage"
+             xmlns:scroll="clr-namespace:Xamarin.Forms.Extended;assembly=Xamarin.Forms.Extended.InfiniteScrolling">
     <StackLayout>
-        <ListView ItemsSource="{Binding RepositoryCollection}"
-                  HasUnevenRows="True">
+        <ListView ItemsSource="{Binding Items}"
+                  HasUnevenRows="True"
+                  CachingStrategy="RecycleElement">
+            <ListView.Behaviors>
+                <scroll:InfiniteScrollBehavior/>
+            </ListView.Behaviors>
             <ListView.ItemTemplate>
                 <DataTemplate>
                    <ViewCell>
@@ -58,6 +63,31 @@
                     </ViewCell>
                 </DataTemplate>
             </ListView.ItemTemplate>
+            <ListView.Footer>
+                <Grid Padding="4" 
+                      IsVisible="{Binding IsBusy}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <!-- set the footer to have a zero height when invisible -->
+                    <Grid.Triggers>
+                        <Trigger TargetType="Grid" Property="IsVisible" Value="False">
+                            <Setter Property="HeightRequest" Value="0" />
+                        </Trigger>
+                    </Grid.Triggers>
+                    
+                    <ActivityIndicator Grid.Row="0" 
+                                       IsRunning="{Binding IsBusy}"
+                                       Color="Black"></ActivityIndicator>
+                    <Label Grid.Row="1" 
+                           Text="Loading..." 
+                           TextColor="Black" 
+                           FontAttributes="Bold" 
+                           VerticalOptions="Center" 
+                           HorizontalOptions="Center" />
+                </Grid>
+            </ListView.Footer>
         </ListView>
     </StackLayout>
 </ContentPage>
