@@ -9,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Xamarin.Forms;
 using Xamarin.Forms.Extended;
 
 namespace GitHubReposExplorer.ViewModels
@@ -18,7 +19,23 @@ namespace GitHubReposExplorer.ViewModels
         IRestService restApiService;
         private const int PageSize = 37;
 
-        public InfiniteScrollCollection<Repository> Items { get; }
+        private InfiniteScrollCollection<Repository> FullList;
+        private InfiniteScrollCollection<Repository> _items;
+        public InfiniteScrollCollection<Repository> Items
+        {
+            get
+            {
+                return _items;
+            }
+            set
+            {
+                _items = value;
+                RaisePropertyChanged("Items");
+            }
+        }
+
+        public Command FilterCommand { get; set; }
+        public string SearchText { get; set; }
 
         private bool _isBusy;
         public bool IsBusy
@@ -47,6 +64,7 @@ namespace GitHubReposExplorer.ViewModels
                    
 
                     IList<Repository> repositoryList = await restApiService.GetAllRepositories(page, PageSize);
+                    FullList.AddRange(repositoryList);
                     Debug.WriteLine(Items.Count);
 
                     IsBusy = false;
@@ -56,9 +74,65 @@ namespace GitHubReposExplorer.ViewModels
                 },
                 OnCanLoadMore = () =>
                 {
-                    return Items.Count < 1000;
+                    if (!string.IsNullOrEmpty(SearchText))
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        return Items.Count < 1000;
+                    }
                 }
             };
+
+            FilterCommand = new Command(() =>
+            {
+                executeFilter();
+            });
+        }
+
+        private void executeFilter()
+        {
+            try
+            {
+
+
+                string text = SearchText;
+                if (text == null)
+                {
+                    Items.Clear();
+                    Items.AddRange(FullList);
+                    return;
+                }
+
+                text = text.ToString().ToLower().Trim();
+
+                if (text == null || text.Trim().Length == 0)
+                {
+                    Items.Clear();
+                    Items.AddRange(FullList);
+                }
+                else
+                {
+                    if (FullList != null && FullList.Count > 0)
+                    {
+                        IEnumerable<Repository> searchList = FullList
+                           .Where(r => (!string.IsNullOrEmpty(r.Name) && r.Name.ToLower().Trim().Contains(text)) ||
+                                       (r.Owner != null && !string.IsNullOrEmpty(r.Owner.Login) && r.Owner.Login.ToLower().Trim().Contains(text))
+                                       );
+                        if (searchList != null)
+                        {
+                            Items.Clear();
+                            Items.AddRange(searchList);
+                        }
+                    }
+
+                }
+            }
+            catch(Exception ex)
+            {
+
+            }
         }
 
         public override void OnNavigatedTo(NavigationParameters parameters)
@@ -70,6 +144,7 @@ namespace GitHubReposExplorer.ViewModels
                 if (repositoryList != null && repositoryList.Count > 0)
                 {
                     Items.AddRange(repositoryList);
+                    FullList = new InfiniteScrollCollection<Repository>(repositoryList);
                 }
                 IsBusy = false;
             });

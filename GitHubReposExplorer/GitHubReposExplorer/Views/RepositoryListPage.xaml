@@ -4,8 +4,16 @@
              xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
              prism:ViewModelLocator.AutowireViewModel="True"
              x:Class="GitHubReposExplorer.Views.RepositoryListPage"
-             xmlns:scroll="clr-namespace:Xamarin.Forms.Extended;assembly=Xamarin.Forms.Extended.InfiniteScrolling">
+             xmlns:scroll="clr-namespace:Xamarin.Forms.Extended;assembly=Xamarin.Forms.Extended.InfiniteScrolling"
+             xmlns:b="clr-namespace:Prism.Behaviors;assembly=Prism.Forms">
     <StackLayout>
+        <SearchBar HorizontalOptions="FillAndExpand"
+                       Text="{Binding SearchText}" >
+            <SearchBar.Behaviors>
+                <b:EventToCommandBehavior EventName="TextChanged"
+                                              Command="{Binding FilterCommand}"/>
+            </SearchBar.Behaviors>
+        </SearchBar>
         <ListView ItemsSource="{Binding Items}"
                   HasUnevenRows="True"
                   CachingStrategy="RecycleElement">
