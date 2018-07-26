@@ -9,6 +9,7 @@ namespace GitHubReposExplorer.Models
         public int Id { get; set; }
         public string Title { get; set; }
         public string Url { get; set; }
+        public string Html_Url { get; set; }
         public int Number { get; set; }
         public string State { get; set; }
 

@@ -4,12 +4,24 @@
              xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
              prism:ViewModelLocator.AutowireViewModel="True"
              x:Class="GitHubReposExplorer.Views.PullRequestsPage"
-             Title="{Binding RepositoryName}">
+             xmlns:converters ="clr-namespace:GitHubReposExplorer.Views.Converters"
+             xmlns:b="clr-namespace:Prism.Behaviors;assembly=Prism.Forms"
+             Title="{Binding Repository.Name}">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:ItemTappedArgsConverter x:Key="itemTappedArgsConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
     <StackLayout>
         <Label Text="{Binding OpenPullReqText}"/>
         <ListView ItemsSource="{Binding PullReqList}"
                   CachingStrategy="RecycleElement"
                   HasUnevenRows="True">
+            <ListView.Behaviors>
+                <b:EventToCommandBehavior EventName="ItemTapped"
+                                              Command="{Binding OpenBrowserCommand}"
+                                              EventArgsConverter="{StaticResource itemTappedArgsConverter}"/>
+            </ListView.Behaviors>
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <ViewCell>

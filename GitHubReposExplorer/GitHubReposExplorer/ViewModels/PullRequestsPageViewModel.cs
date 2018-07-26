@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Xamarin.Forms;
 
 namespace GitHubReposExplorer.ViewModels
 {
@@ -42,12 +43,21 @@ namespace GitHubReposExplorer.ViewModels
             }
         }
 
+        public Command OpenBrowserCommand { get; set; }
+
         public Repository Repository { get; set; }
         public PullRequestsPageViewModel(IRestService restService,
                                          INavigationService navigationService)
                                          :base(navigationService)
         {
             this.restApiService = restService;
+
+            OpenBrowserCommand = new Command<object>(async (p) =>
+            {
+                PullRequest pullReq = (PullRequest)p;
+                if(pullReq!= null && !string.IsNullOrEmpty(pullReq.Html_Url))
+                    Device.OpenUri(new Uri(pullReq.Html_Url));
+            });
         }
 
         public override void OnNavigatedTo(NavigationParameters parameters)
