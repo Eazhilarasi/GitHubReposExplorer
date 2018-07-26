@@ -12,5 +12,8 @@ namespace GitHubReposExplorer.Services
                                                    int page_size, 
                                                    string language = "Javascript"
                                                    );
+        Task<IList<PullRequest>> GetAllPullRequestsForRepo(string repo,
+                                                           string username
+                                                           );
     }
 }

@@ -35,6 +35,7 @@ namespace GitHubReposExplorer.ViewModels
         }
 
         public Command FilterCommand { get; set; }
+        public Command GoToPullRequestPageCommand { get; set; }
         public string SearchText { get; set; }
 
         private bool _isBusy;
@@ -89,14 +90,20 @@ namespace GitHubReposExplorer.ViewModels
             {
                 executeFilter();
             });
+
+            GoToPullRequestPageCommand = new Command<object>(async (p) =>
+            {
+                Repository r = (Repository)p;
+                NavigationParameters parameters = new NavigationParameters();
+                parameters.Add("repository", r);
+                await navigationService.NavigateAsync("PullRequestsPage", parameters);
+            });
         }
 
         private void executeFilter()
         {
             try
             {
-
-
                 string text = SearchText;
                 if (text == null)
                 {
@@ -117,9 +124,13 @@ namespace GitHubReposExplorer.ViewModels
                     if (FullList != null && FullList.Count > 0)
                     {
                         IEnumerable<Repository> searchList = FullList
-                           .Where(r => (!string.IsNullOrEmpty(r.Name) && r.Name.ToLower().Trim().Contains(text)) ||
-                                       (r.Owner != null && !string.IsNullOrEmpty(r.Owner.Login) && r.Owner.Login.ToLower().Trim().Contains(text))
-                                       );
+                           .Where(r => 
+                           (!string.IsNullOrEmpty(r.Name) 
+                           && r.Name.ToLower().Trim().Contains(text))
+                           ||
+                           (r.Owner != null 
+                           && !string.IsNullOrEmpty(r.Owner.Login) 
+                           && r.Owner.Login.ToLower().Trim().Contains(text)));
                         if (searchList != null)
                         {
                             Items.Clear();

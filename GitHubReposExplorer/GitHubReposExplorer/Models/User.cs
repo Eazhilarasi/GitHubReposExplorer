@@ -4,7 +4,7 @@ using System.Text;
 
 namespace GitHubReposExplorer.Models
 {
-    public class Author
+    public class User
     {
         public string Login { get; set; }
         public int Id { get; set; }
