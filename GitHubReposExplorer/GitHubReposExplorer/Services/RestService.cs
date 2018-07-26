@@ -63,7 +63,7 @@ namespace GitHubReposExplorer.Services
             return default(T);
         }
 
-        public async Task<IList<PullRequest>> GetAllPullRequestsForRepo(string repo, string username)
+        public async Task<IList<PullRequest>> GetAllPullRequestsForRepo(string username, string repo)
         {
             string url = string.Format("/repos/{0}/{1}/pulls?state=all", username, repo);
             var records = await GetAsync<IList<PullRequest>>(url);
