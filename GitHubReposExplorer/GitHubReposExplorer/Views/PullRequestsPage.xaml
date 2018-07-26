@@ -3,6 +3,42 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
              prism:ViewModelLocator.AutowireViewModel="True"
-             x:Class="GitHubReposExplorer.Views.PullRequestsPage">
-  
+             x:Class="GitHubReposExplorer.Views.PullRequestsPage"
+             Title="{Binding RepositoryName}">
+    <StackLayout>
+        <Label Text="{Binding OpenPullReqText}"/>
+        <ListView ItemsSource="{Binding PullReqList}"
+                  CachingStrategy="RecycleElement"
+                  HasUnevenRows="True">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+                            <Label Text="{Binding Title}"
+                                   Grid.Row="0"/>
+                            <Label Text="{Binding Body}"
+                                   Grid.Row="1"
+                                   HeightRequest="40"
+                                   LineBreakMode="TailTruncation"/>
+                            <StackLayout Orientation="Horizontal"
+                                         Grid.Row="2">
+                                <Image Source="{Binding User.Avatar_url}"
+                                       HeightRequest="20"
+                                       WidthRequest="20"/>
+                                <StackLayout>
+                                    <Label Text="{Binding User.Login}"/>
+                                    <Label Text="{Binding Created_At}"/>
+                                </StackLayout>
+                            </StackLayout>
+                        </Grid>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </StackLayout>
 </ContentPage>
