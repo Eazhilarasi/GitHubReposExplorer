@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using GitHubReposExplorer.Helpers;
 using GitHubReposExplorer.Models;
 using Newtonsoft.Json;
 
@@ -17,6 +18,7 @@ namespace GitHubReposExplorer.Services
         {
             this.client = httpClient;
             client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+           
         }
 
         public async Task<IList<Repository>> GetAllRepositories(int page, int page_size, string language = "JavaScript")
@@ -34,7 +36,8 @@ namespace GitHubReposExplorer.Services
         {
             var req = new HttpRequestMessage(method,url);
             //Mandatory header(User-Agent) to make any successful Git Hub API request
-            req.Headers.Add("User-Agent", "Eazhilarasi");
+            req.Headers.Add("User-Agent", ConfigHelper.Instance.UserName);
+            req.Headers.Add("Authorization", ConfigHelper.Instance.AccessToken);
             return req;
         }
 
