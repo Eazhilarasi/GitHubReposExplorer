@@ -6,6 +6,9 @@
              x:Class="GitHubReposExplorer.Views.PullRequestsPage"
              xmlns:converters ="clr-namespace:GitHubReposExplorer.Views.Converters"
              xmlns:b="clr-namespace:Prism.Behaviors;assembly=Prism.Forms"
+             xmlns:cntrl="clr-namespace:GitHubReposExplorer.Views.Controls"
+             xmlns:imgLoad="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
+             xmlns:imgTrasn="clr-namespace:FFImageLoading.Transformations;assembly=FFImageLoading.Transformations"
              Title="{Binding Repository.Name}">
     <ContentPage.Resources>
         <ResourceDictionary>
@@ -25,26 +28,35 @@
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <ViewCell>
-                        <Grid>
+                        <Grid Padding="4,0,4,0">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="auto"/>
                                 <RowDefinition Height="auto"/>
                                 <RowDefinition Height="auto"/>
                             </Grid.RowDefinitions>
                             <Label Text="{Binding Title}"
-                                   Grid.Row="0"/>
-                            <Label Text="{Binding Body}"
+                                   Grid.Row="0"
+                                   Style="{StaticResource titleLabelStyle}"/>
+                            <cntrl:CustomLabel Text="{Binding Body}"
                                    Grid.Row="1"
-                                   HeightRequest="40"
-                                   LineBreakMode="TailTruncation"/>
+                                   MaxLines="2"
+                                   Style="{StaticResource descripLabelStyle}"/>
                             <StackLayout Orientation="Horizontal"
                                          Grid.Row="2">
-                                <Image Source="{Binding User.Avatar_url}"
-                                       HeightRequest="20"
-                                       WidthRequest="20"/>
+                                <imgLoad:CachedImage 
+                                       Source="{Binding User.Avatar_url}"
+                                       HeightRequest="30"
+                                       WidthRequest="30">
+                                    <imgLoad:CachedImage.Transformations>
+                                        <imgTrasn:CircleTransformation/>
+                                    </imgLoad:CachedImage.Transformations>
+                                </imgLoad:CachedImage>
                                 <StackLayout>
-                                    <Label Text="{Binding User.Login}"/>
-                                    <Label Text="{Binding Created_At}"/>
+                                    <Label Text="{Binding User.Login}"
+                                           Style="{StaticResource userLabelStyle}"/>
+                                    <Label 
+                                           Text="{Binding Created_At, StringFormat=' {0:dd/MM/yyyy}'}"
+                                           Style="{StaticResource bodyLabelStyle}"/>
                                 </StackLayout>
                             </StackLayout>
                         </Grid>

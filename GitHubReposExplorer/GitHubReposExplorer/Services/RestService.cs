@@ -37,7 +37,7 @@ namespace GitHubReposExplorer.Services
             var req = new HttpRequestMessage(method,url);
             //Mandatory header(User-Agent) to make any successful Git Hub API request
             req.Headers.Add("User-Agent", ConfigHelper.Instance.UserName);
-            req.Headers.Add("Authorization", ConfigHelper.Instance.AccessToken);
+           // req.Headers.Add("Authorization", ConfigHelper.Instance.AccessToken);
             return req;
         }
 

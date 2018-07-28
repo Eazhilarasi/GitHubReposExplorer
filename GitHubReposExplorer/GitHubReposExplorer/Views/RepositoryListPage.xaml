@@ -38,7 +38,7 @@
             <ListView.ItemTemplate>
                 <DataTemplate>
                    <ViewCell>
-                        <Grid>
+                        <Grid Padding="4,0,4,0">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="3*"/>
                                 <ColumnDefinition Width="*"/>
@@ -51,15 +51,12 @@
                             <Label Text="{Binding Name}"
                                    Grid.Row="0"
                                    Grid.Column="0"
-                                   FontAttributes="Bold"
-                                   FontSize="Medium"/>
+                                   Style="{StaticResource titleLabelStyle}"/>
                             <cntrls:CustomLabel Text="{Binding Description}"
                                                 Grid.Row="1"
                                                 Grid.Column="0"
                                                 MaxLines="2"
-                                                LineBreakMode="TailTruncation"
-                                                FontSize="Small"
-                                                TextColor="Black"/>
+                                                Style="{StaticResource descripLabelStyle}"/>
                             <StackLayout Grid.Row="2"
                                          Grid.Column="0"
                                          Orientation="Horizontal">
@@ -70,7 +67,7 @@
                                            HeightRequest="20"/>
                                     <Label Text="{Binding Forks_Count}"
                                            VerticalOptions="Center"
-                                           FontSize="Small"/>
+                                           Style="{StaticResource bodyLabelStyle}"/>
                                 </StackLayout>
                                 <StackLayout Orientation="Horizontal">
                                     <svgImgLoad:SvgCachedImage 
@@ -79,7 +76,7 @@
                                            HeightRequest="20"/>
                                     <Label Text="{Binding Stargazers_Count}"
                                            VerticalOptions="Center"
-                                           FontSize="Small"/>
+                                           Style="{StaticResource bodyLabelStyle}"/>
                                 </StackLayout>
                             </StackLayout>
                             <imgLoad:CachedImage Source="{Binding Owner.Avatar_url}"
@@ -97,8 +94,7 @@
                                    Grid.Column="1"
                                    Grid.Row="2"
                                    HorizontalOptions="Center"
-                                   TextColor="Coral"
-                                   FontSize="Small"/>
+                                   Style="{StaticResource userLabelStyle}"/>
                         </Grid>
                     </ViewCell>
                 </DataTemplate>
