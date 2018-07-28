@@ -5,8 +5,13 @@
              prism:ViewModelLocator.AutowireViewModel="True"
              x:Class="GitHubReposExplorer.Views.RepositoryListPage"
              xmlns:scroll="clr-namespace:Xamarin.Forms.Extended;assembly=Xamarin.Forms.Extended.InfiniteScrolling"
+             xmlns:cntrls ="clr-namespace:GitHubReposExplorer.Views.Controls"
              xmlns:b="clr-namespace:Prism.Behaviors;assembly=Prism.Forms"
-             xmlns:converters ="clr-namespace:GitHubReposExplorer.Views.Converters">
+             xmlns:converters ="clr-namespace:GitHubReposExplorer.Views.Converters"
+             xmlns:imgLoad="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
+             xmlns:svgImgLoad="clr-namespace:FFImageLoading.Svg.Forms;assembly=FFImageLoading.Svg.Forms"
+             xmlns:imgTrasn="clr-namespace:FFImageLoading.Transformations;assembly=FFImageLoading.Transformations"
+             Title="GitHub Repos">
     <ContentPage.Resources>
         <ResourceDictionary>
             <converters:ItemTappedArgsConverter x:Key="itemTappedArgsConverter"/>
@@ -14,10 +19,11 @@
     </ContentPage.Resources>
     <StackLayout>
         <SearchBar HorizontalOptions="FillAndExpand"
-                       Text="{Binding SearchText}" >
+                   Text="{Binding SearchText}"
+                   Placeholder="Search">
             <SearchBar.Behaviors>
                 <b:EventToCommandBehavior EventName="TextChanged"
-                                              Command="{Binding FilterCommand}"/>
+                                          Command="{Binding FilterCommand}"/>
             </SearchBar.Behaviors>
         </SearchBar>
         <ListView ItemsSource="{Binding Items}"
@@ -26,8 +32,8 @@
             <ListView.Behaviors>
                 <scroll:InfiniteScrollBehavior/>
                 <b:EventToCommandBehavior EventName="ItemTapped"
-                                              Command="{Binding GoToPullRequestPageCommand}"
-                                              EventArgsConverter="{StaticResource itemTappedArgsConverter}"/>
+                                          Command="{Binding GoToPullRequestPageCommand}"
+                                          EventArgsConverter="{StaticResource itemTappedArgsConverter}"/>
             </ListView.Behaviors>
             <ListView.ItemTemplate>
                 <DataTemplate>
@@ -44,38 +50,55 @@
                             </Grid.RowDefinitions>
                             <Label Text="{Binding Name}"
                                    Grid.Row="0"
-                                   Grid.Column="0"/>
-                            <Label Text="{Binding Description}"
-                                   Grid.Row="1"
-                                   Grid.Column="0"/>
+                                   Grid.Column="0"
+                                   FontAttributes="Bold"
+                                   FontSize="Medium"/>
+                            <cntrls:CustomLabel Text="{Binding Description}"
+                                                Grid.Row="1"
+                                                Grid.Column="0"
+                                                MaxLines="2"
+                                                LineBreakMode="TailTruncation"
+                                                FontSize="Small"
+                                                TextColor="Black"/>
                             <StackLayout Grid.Row="2"
                                          Grid.Column="0"
                                          Orientation="Horizontal">
                                 <StackLayout Orientation="Horizontal">
-                                    <Image Source="fork.png"
+                                    <svgImgLoad:SvgCachedImage 
+                                           Source="resource://GitHubReposExplorer.Images.fork.svg"
                                            WidthRequest="20"
                                            HeightRequest="20"/>
                                     <Label Text="{Binding Forks_Count}"
-                                           VerticalOptions="Center"/>
+                                           VerticalOptions="Center"
+                                           FontSize="Small"/>
                                 </StackLayout>
-
                                 <StackLayout Orientation="Horizontal">
-                                    <Image Source="star.png"
+                                    <svgImgLoad:SvgCachedImage 
+                                           Source="resource://GitHubReposExplorer.Images.star.svg"
                                            WidthRequest="20"
                                            HeightRequest="20"/>
                                     <Label Text="{Binding Stargazers_Count}"
-                                           VerticalOptions="Center"/>
+                                           VerticalOptions="Center"
+                                           FontSize="Small"/>
                                 </StackLayout>
                             </StackLayout>
-                            <Image Source="{Binding Owner.Avatar_url}"
-                                   Grid.Column="1"
-                                   Grid.Row="0"
-                                   Grid.RowSpan="2"
-                                   HeightRequest="30"
-                                   WidthRequest="30"/>
+                            <imgLoad:CachedImage Source="{Binding Owner.Avatar_url}"
+                                               Grid.Column="1"
+                                               Grid.Row="0"
+                                               Grid.RowSpan="2"
+                                               HeightRequest="10"
+                                               WidthRequest="10"
+                                               Aspect="AspectFit">       
+                                <imgLoad:CachedImage.Transformations>
+                                    <imgTrasn:CircleTransformation/>
+                                </imgLoad:CachedImage.Transformations>
+                            </imgLoad:CachedImage>
                             <Label Text="{Binding Owner.Login}"
                                    Grid.Column="1"
-                                   Grid.Row="2"/>
+                                   Grid.Row="2"
+                                   HorizontalOptions="Center"
+                                   TextColor="Coral"
+                                   FontSize="Small"/>
                         </Grid>
                     </ViewCell>
                 </DataTemplate>
