@@ -43,6 +43,17 @@ namespace GitHubReposExplorer.ViewModels
             }
         }
 
+        private bool _isBusy;
+        public bool IsBusy
+        {
+            get { return _isBusy; }
+            set
+            {
+                _isBusy = value;
+                RaisePropertyChanged("IsBusy");
+            }
+        }
+
         public Command OpenBrowserCommand { get; set; }
 
         public Repository Repository { get; set; }
@@ -68,8 +79,9 @@ namespace GitHubReposExplorer.ViewModels
                 Repository = r;
                 Task.Run(async () =>
                 {
-                    //IsBusy = true;
+                    IsBusy = true;
                     IList<PullRequest> pullRequests = await restApiService.GetAllPullRequestsForRepo(r.Owner.Login, r.Name);
+                    IsBusy = false;
                     if (pullRequests != null && pullRequests.Count > 0)
                     {
                         PullReqList = pullRequests.Where(p => p.State.Equals("open")).ToList();

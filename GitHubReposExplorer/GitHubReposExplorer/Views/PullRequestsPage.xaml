@@ -16,7 +16,10 @@
         </ResourceDictionary>
     </ContentPage.Resources>
     <StackLayout>
-        <Label Text="{Binding OpenPullReqText}"/>
+        <StackLayout BackgroundColor="Gray">
+            <Label Text="{Binding OpenPullReqText}"
+                   Style="{StaticResource userLabelStyle}"/>
+        </StackLayout>
         <ListView ItemsSource="{Binding PullReqList}"
                   CachingStrategy="RecycleElement"
                   HasUnevenRows="True">
@@ -63,6 +66,31 @@
                     </ViewCell>
                 </DataTemplate>
             </ListView.ItemTemplate>
+            <ListView.Footer>
+                <Grid Padding="4" 
+                      IsVisible="{Binding IsBusy}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <!-- set the footer to have a zero height when invisible -->
+                    <Grid.Triggers>
+                        <Trigger TargetType="Grid" Property="IsVisible" Value="False">
+                            <Setter Property="HeightRequest" Value="0" />
+                        </Trigger>
+                    </Grid.Triggers>
+
+                    <ActivityIndicator Grid.Row="0" 
+                                       IsRunning="{Binding IsBusy}"
+                                       Color="Black"></ActivityIndicator>
+                    <Label Grid.Row="1" 
+                           Text="Loading..." 
+                           TextColor="Black" 
+                           FontAttributes="Bold" 
+                           VerticalOptions="Center" 
+                           HorizontalOptions="Center" />
+                </Grid>
+            </ListView.Footer>
         </ListView>
     </StackLayout>
 </ContentPage>

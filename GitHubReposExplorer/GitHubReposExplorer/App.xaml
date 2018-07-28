@@ -7,9 +7,13 @@
 
 		<!-- Application resource dictionary -->
         <ResourceDictionary>
+            <Color x:Key="genesisBlue">#8ca9dd</Color>
+            <Color x:Key="genesisGreen">#89c064</Color>
+            
             <Style TargetType="Label" x:Key="titleLabelStyle">
                 <Setter Property="FontAttributes" Value="Bold"/>
                 <Setter Property="FontSize" Value="Medium"/>
+                <Setter Property="TextColor" Value="{StaticResource genesisBlue}"/>
             </Style>
             <Style TargetType="Label" x:Key="bodyLabelStyle">
                 <Setter Property="FontSize" Value="Small"/>
@@ -19,15 +23,7 @@
                 <Setter Property="LineBreakMode" Value="TailTruncation"/>
             </Style>
             <Style TargetType="Label" x:Key="userLabelStyle" BasedOn="{StaticResource bodyLabelStyle}">
-                <Setter Property="TextColor" Value="LawnGreen"/>
-            </Style>
-            <Style TargetType="NavigationPage">
-                <Setter Property="BarBackgroundColor" Value="White"/>
-                <Setter Property="BarTextColor" >
-                    <Setter.Value>
-                        <OnPlatform x:TypeArguments="Color" Android="LawnGreen"/>
-                    </Setter.Value>
-                </Setter>
+                <Setter Property="TextColor" Value="{StaticResource genesisGreen}"/>
             </Style>
         </ResourceDictionary>
 	</Application.Resources>
