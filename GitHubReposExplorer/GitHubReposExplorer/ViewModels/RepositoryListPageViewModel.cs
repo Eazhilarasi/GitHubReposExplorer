@@ -1,8 +1,10 @@
 ﻿using GitHubReposExplorer.Models;
 using GitHubReposExplorer.Services;
+using Plugin.Connectivity;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Navigation;
+using Prism.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -17,6 +19,7 @@ namespace GitHubReposExplorer.ViewModels
 	public class RepositoryListPageViewModel : ViewModelBase
 	{
         IRestService restApiService;
+        IPageDialogService dialog;
         private const int PageSize = 37;
 
         private InfiniteScrollCollection<Repository> FullList;
@@ -49,10 +52,13 @@ namespace GitHubReposExplorer.ViewModels
             }
         }
         public RepositoryListPageViewModel(IRestService restService,
-                                            INavigationService navigationService)
-                                            :base(navigationService)
+                                            INavigationService navigationService,
+                                            IPageDialogService dialogService)
+                                            :base(navigationService,
+                                                  dialogService)
         {
             this.restApiService = restService;
+            this.dialog = dialogService;
 
             Items = new InfiniteScrollCollection<Repository>
             {
@@ -61,6 +67,7 @@ namespace GitHubReposExplorer.ViewModels
                     IsBusy = true;
 
                     // load the next page
+                    
                     var page = (Items.Count / PageSize) + 1;
                    
 
@@ -150,14 +157,32 @@ namespace GitHubReposExplorer.ViewModels
         {
             Task.Run(async () =>
             {
-                IsBusy = true;
-                IList<Repository> repositoryList = await restApiService.GetAllRepositories(1,PageSize);
-                if (repositoryList != null && repositoryList.Count > 0)
+                try
                 {
-                    Items.AddRange(repositoryList);
-                    FullList = new InfiniteScrollCollection<Repository>(repositoryList);
+                    if (CrossConnectivity.Current.IsConnected)
+                    {
+                        IsBusy = true;
+                        IList<Repository> repositoryList = await restApiService.GetAllRepositories(1, PageSize);
+                        if (repositoryList != null && repositoryList.Count > 0)
+                        {
+                            Items.AddRange(repositoryList);
+                            FullList = new InfiniteScrollCollection<Repository>(repositoryList);
+                        }
+                        IsBusy = false;
+                    }
+                    else
+                    {
+                        Device.BeginInvokeOnMainThread(async () =>
+                        {
+                            await dialog.DisplayAlertAsync("Connectivity", "No Internet, try again later", "OK");
+                        });
+                       
+                    }
                 }
-                IsBusy = false;
+                catch(Exception ex)
+                {
+
+                }
             });
             base.OnNavigatedTo(parameters);
         }

@@ -36,7 +36,6 @@ namespace GitHubReposExplorer
             containerRegistry.Register<IRestService, RestService>();
 
             containerRegistry.RegisterForNavigation<NavigationPage>();
-            containerRegistry.RegisterForNavigation<MainPage>();
             containerRegistry.RegisterForNavigation<RepositoryListPage>();
             containerRegistry.RegisterForNavigation<PullRequestsPage>();
         }

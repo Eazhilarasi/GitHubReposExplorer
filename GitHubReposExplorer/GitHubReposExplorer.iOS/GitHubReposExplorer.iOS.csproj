@@ -190,6 +190,9 @@
     <Reference Include="Xamarin.iOS" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Xam.Plugin.Connectivity">
+      <Version>4.0.0.190-beta</Version>
+    </PackageReference>
     <PackageReference Include="Xamarin.FFImageLoading">
       <Version>2.4.3.840</Version>
     </PackageReference>
