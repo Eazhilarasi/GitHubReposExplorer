@@ -64,18 +64,35 @@ namespace GitHubReposExplorer.ViewModels
             {
                 OnLoadMore = async () =>
                 {
-                    IsBusy = true;
+                    IList<Repository> repositoryList = null;
+                    try
+                    {
+                        if (CrossConnectivity.Current.IsConnected)
+                        {
 
-                    // load the next page
-                    
-                    var page = (Items.Count / PageSize) + 1;
-                   
+                            IsBusy = true;
 
-                    IList<Repository> repositoryList = await restApiService.GetAllRepositories(page, PageSize);
-                    FullList.AddRange(repositoryList);
-                    Debug.WriteLine(Items.Count);
+                            // load the next page
 
-                    IsBusy = false;
+                            var page = (Items.Count / PageSize) + 1;
+
+
+                            repositoryList = await restApiService.GetAllRepositories(page, PageSize);
+                            if (FullList != null && repositoryList != null)
+                                FullList.AddRange(repositoryList);
+                            Debug.WriteLine(Items.Count);
+
+                            IsBusy = false;
+                        }
+                        else
+                        {
+                            DisplayAlert("Connectivity", "No Internet, try again later");
+                        }
+                    }
+                    catch
+                    {
+                        DisplayAlert("Apologies", "Something went wrong");
+                    }
 
                     // return the items that need to be added
                     return repositoryList;
@@ -115,7 +132,8 @@ namespace GitHubReposExplorer.ViewModels
                 if (text == null)
                 {
                     Items.Clear();
-                    Items.AddRange(FullList);
+                    if(FullList!= null)
+                        Items.AddRange(FullList);
                     return;
                 }
 
@@ -124,7 +142,8 @@ namespace GitHubReposExplorer.ViewModels
                 if (text == null || text.Trim().Length == 0)
                 {
                     Items.Clear();
-                    Items.AddRange(FullList);
+                    if (FullList != null)
+                        Items.AddRange(FullList);
                 }
                 else
                 {
@@ -149,41 +168,48 @@ namespace GitHubReposExplorer.ViewModels
             }
             catch(Exception ex)
             {
-
+                DisplayAlert("Apologies", "Something went wrong");
             }
         }
 
         public override void OnNavigatedTo(NavigationParameters parameters)
         {
-            Task.Run(async () =>
+            //If navigation is not a back navigation from pull requests page.
+            if (parameters!= null && parameters.GetNavigationMode().Equals(NavigationMode.New))
             {
-                try
                 {
-                    if (CrossConnectivity.Current.IsConnected)
+                    Task.Run(async () =>
                     {
-                        IsBusy = true;
-                        IList<Repository> repositoryList = await restApiService.GetAllRepositories(1, PageSize);
-                        if (repositoryList != null && repositoryList.Count > 0)
+                        try
                         {
-                            Items.AddRange(repositoryList);
-                            FullList = new InfiniteScrollCollection<Repository>(repositoryList);
-                        }
-                        IsBusy = false;
-                    }
-                    else
-                    {
-                        Device.BeginInvokeOnMainThread(async () =>
-                        {
-                            await dialog.DisplayAlertAsync("Connectivity", "No Internet, try again later", "OK");
-                        });
-                       
-                    }
-                }
-                catch(Exception ex)
-                {
+                            if (CrossConnectivity.Current.IsConnected)
+                            {
+                                IsBusy = true;
+                                IList<Repository> repositoryList = await restApiService.GetAllRepositories(1, PageSize);
+                                if (repositoryList != null && repositoryList.Count > 0)
+                                {
+                                    Items.AddRange(repositoryList);
+                                    FullList = new InfiniteScrollCollection<Repository>(repositoryList);
+                                }
+                                IsBusy = false;
+                            }
+                            else
+                            {
+                                Device.BeginInvokeOnMainThread(() =>
+                                {
+                                    DisplayAlert("Connectivity", "No Internet, try again later");
+                                });
 
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            DisplayAlert("Apologies", "Something went wrong");
+                        }
+                    });
                 }
-            });
+            }
+            
             base.OnNavigatedTo(parameters);
         }
 

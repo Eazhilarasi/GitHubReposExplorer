@@ -43,24 +43,17 @@ namespace GitHubReposExplorer.Services
 
         private async Task<T> GetAsync<T>(string url)
         {
-            try
+            string fullUrl = string.Format("{0}{1}", baseURL, url);
+            var req = GetRequest(HttpMethod.Get, fullUrl);
+
+            var result = await client.SendAsync(req);
+
+
+            if (result.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                string fullUrl = string.Format("{0}{1}", baseURL, url);
-                var req = GetRequest(HttpMethod.Get, fullUrl);
-
-                var result = await client.SendAsync(req);
-
-
-                if (result.StatusCode == System.Net.HttpStatusCode.OK)
-                {
-                    var str = await result.Content.ReadAsStringAsync();
-                    var records = JsonConvert.DeserializeObject<T>(str);
-                    return records;
-                }
-            }
-            catch(Exception ex)
-            {
-
+                var str = await result.Content.ReadAsStringAsync();
+                var records = JsonConvert.DeserializeObject<T>(str);
+                return records;
             }
 
             return default(T);

@@ -2,6 +2,7 @@
 using Android.Content.PM;
 using Android.OS;
 using FFImageLoading.Forms.Platform;
+using HockeyApp.Android;
 using Prism;
 using Prism.Ioc;
 
@@ -27,6 +28,23 @@ namespace GitHubReposExplorer.Droid
             global::Xamarin.Forms.Forms.Init(this, bundle);
             CachedImageRenderer.Init(true);
             LoadApplication(new App(new AndroidInitializer()));
+        }
+
+        protected override void OnResume()
+        {
+            base.OnResume();
+            CrashManager.Register(this,
+                              "9eb7234e26894815aeb83b60e7bf10bf",
+                              new CustomCrashListener());
+        }
+    }
+
+    public class CustomCrashListener : CrashManagerListener
+    {
+
+        public override bool ShouldAutoUploadCrashes()
+        {
+            return true;
         }
     }
 

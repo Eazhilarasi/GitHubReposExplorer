@@ -59,7 +59,6 @@ namespace GitHubReposExplorer.ViewModels
 
         public Command OpenBrowserCommand { get; set; }
 
-        public Repository Repository { get; set; }
         public PullRequestsPageViewModel(IRestService restService,
                                          INavigationService navigationService,
                                          IPageDialogService dialogService)
@@ -79,39 +78,49 @@ namespace GitHubReposExplorer.ViewModels
 
         public override void OnNavigatedTo(NavigationParameters parameters)
         {
-            if (parameters != null && parameters.ContainsKey("repository"))
+            try
             {
-                Repository r = (Repository)parameters["repository"];
-                Title = r.Name;
-                Task.Run(async () =>
+                if (parameters != null && parameters.ContainsKey("repository"))
                 {
-                    if (CrossConnectivity.Current.IsConnected)
+                    Repository r = (Repository)parameters["repository"];
+                    if (r != null)
                     {
-                        IsBusy = true;
-                        IList<PullRequest> pullRequests = await restApiService.GetAllPullRequestsForRepo(r.Owner.Login, r.Name);
-                        IsBusy = false;
-                        if (pullRequests != null && pullRequests.Count > 0)
+                        Title = r.Name;
+                        Task.Run(async () =>
                         {
-                            PullReqList = pullRequests.Where(p => p.State.Equals("open")).ToList();
-                            if (PullReqList != null && PullReqList.Count > 0)
+                            if (CrossConnectivity.Current.IsConnected)
                             {
-                                OpenPullReqText = string.Format("{0} opened/{1} closed", PullReqList.Count, pullRequests.Count);
-                                Debug.WriteLine(OpenPullReqText);
+                                IsBusy = true;
+                                IList<PullRequest> pullRequests = await restApiService.GetAllPullRequestsForRepo(r.Owner.Login, r.Name);
+                                IsBusy = false;
+                                if (pullRequests != null && pullRequests.Count > 0)
+                                {
+                                    PullReqList = pullRequests.Where(p => p.State.Equals("open")).ToList();
+                                    if (PullReqList != null && PullReqList.Count > 0)
+                                    {
+                                        OpenPullReqText = string.Format("{0} opened/{1} closed", PullReqList.Count, pullRequests.Count);
+                                        Debug.WriteLine(OpenPullReqText);
+                                    }
+                                    else
+                                    {
+                                        OpenPullReqText = "No open pull requests";
+                                    }
+                                }
                             }
                             else
                             {
-                                OpenPullReqText = "No open pull requests";
+                                Device.BeginInvokeOnMainThread(() =>
+                                {
+                                    DisplayAlert("Connectivity", "No Internet, try again later");
+                                });
                             }
-                        }
-                    }
-                    else
-                    {
-                        Device.BeginInvokeOnMainThread(async () =>
-                        {
-                            await dialog.DisplayAlertAsync("Connectivity", "No Internet, try again later", "OK");
                         });
                     }
-                });
+                }
+            }
+            catch(Exception ex)
+            {
+                DisplayAlert("Apologies", "Something went wrong");
             }
             base.OnNavigatedTo(parameters);
         }

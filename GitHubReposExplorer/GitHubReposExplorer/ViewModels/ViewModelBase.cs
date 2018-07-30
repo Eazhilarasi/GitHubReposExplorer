@@ -5,6 +5,7 @@ using Prism.Services;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Xamarin.Forms;
 
 namespace GitHubReposExplorer.ViewModels
 {
@@ -45,6 +46,14 @@ namespace GitHubReposExplorer.ViewModels
         public virtual void Destroy()
         {
             
+        }
+
+        protected void DisplayAlert(string title, string message, string button = "OK")
+        {
+            Device.BeginInvokeOnMainThread(async () =>
+            {
+                await DialogService.DisplayAlertAsync(title, message, button);
+            });
         }
     }
 }
